@@ -1,10 +1,10 @@
 <div align="center">
 
 
-# Dreamix 🎬 🎮
+# Dreamix 
 
-## An AI-Native Interactive Video Agent. 
-## From Ideas to Interactive Stories. 
+### An AI-Native Interactive Video Agent. 🎬 
+### From Ideas to Interactive Stories. 🎮
 
 
 </div>
