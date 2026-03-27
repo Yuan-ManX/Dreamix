@@ -1,9 +1,13 @@
 <div align="center">
 
+<img src="./assets/Dreamix-Logo.jpeg" alt="Dreamix Logo" width="65%"/> 
+
 # Dreamix
 
 ### An AI-Native Interactive Video Agent. 🎬
 ### From Ideas to Interactive Stories. 🎮
+
+#### [English](./README.md) | [中文文档](./README_CN.md)
 
 </div>
 
