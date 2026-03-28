@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/Dreamix-Logo.png" alt="Dreamix Logo" width="30%"/> 
+<img src="./assets/Dreamix-Logo.png" alt="Dreamix Logo" width="40%"/> 
 
 # Dreamix 🎬 🎮
 
