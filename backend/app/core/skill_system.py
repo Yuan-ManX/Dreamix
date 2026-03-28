@@ -317,6 +317,161 @@ class SkillLibrary:
             description="Add quick cuts"
         ))
         self.skills[vlog_style.skill_id] = vlog_style
+        
+        speech_rough_cut = Skill(
+            name="Speech Rough Cut",
+            description="Auto-remove filler words, disfluencies, and repeated sentences for clean speech editing",
+            skill_type=SkillType.EDITING,
+            difficulty=SkillDifficulty.INTERMEDIATE,
+            tags=["speech", "asr", "cleanup", "filler", "rough cut"],
+            is_builtin=True,
+            author="Dreamix"
+        )
+        speech_rough_cut.add_step(WorkflowStep(
+            step_type="transcribe_audio",
+            parameters={"model_size": "base"},
+            description="Transcribe speech to text"
+        ))
+        speech_rough_cut.add_step(WorkflowStep(
+            step_type="remove_fillers",
+            parameters={"remove_fillers": True, "remove_repeats": True, "remove_disfluencies": True},
+            description="Remove filler words and disfluencies"
+        ))
+        speech_rough_cut.add_step(WorkflowStep(
+            step_type="generate_rough_cut",
+            parameters={"min_segment_duration": 0.5},
+            description="Generate cleaned rough cut"
+        ))
+        self.skills[speech_rough_cut.skill_id] = speech_rough_cut
+        
+        product_review = Skill(
+            name="Product Review",
+            description="Create professional product review videos with structured format",
+            skill_type=SkillType.COMPLETE,
+            difficulty=SkillDifficulty.BEGINNER,
+            tags=["product", "review", "demo", "marketing"],
+            is_builtin=True,
+            author="Dreamix"
+        )
+        product_review.add_step(WorkflowStep(
+            step_type="add_intro",
+            parameters={"duration": 3.0, "show_product": True},
+            description="Add product intro"
+        ))
+        product_review.add_step(WorkflowStep(
+            step_type="show_features",
+            parameters={"highlight_key_features": True},
+            description="Highlight key product features"
+        ))
+        product_review.add_step(WorkflowStep(
+            step_type="add_demo",
+            parameters={"show_in_action": True},
+            description="Show product in action"
+        ))
+        product_review.add_step(WorkflowStep(
+            step_type="add_music",
+            parameters={"mood": "positive", "volume": 0.3},
+            description="Add background music"
+        ))
+        product_review.add_step(WorkflowStep(
+            step_type="add_cta",
+            parameters={"text": "Buy Now", "position": "end"},
+            description="Add call-to-action"
+        ))
+        self.skills[product_review.skill_id] = product_review
+        
+        educational_content = Skill(
+            name="Educational Content",
+            description="Create engaging educational and tutorial videos",
+            skill_type=SkillType.COMPLETE,
+            difficulty=SkillDifficulty.INTERMEDIATE,
+            tags=["education", "tutorial", "learning", "explainer"],
+            is_builtin=True,
+            author="Dreamix"
+        )
+        educational_content.add_step(WorkflowStep(
+            step_type="add_title",
+            parameters={"style": "educational", "clear": True},
+            description="Add clear title"
+        ))
+        educational_content.add_step(WorkflowStep(
+            step_type="add_outline",
+            parameters={"show_agenda": True},
+            description="Show lesson outline"
+        ))
+        educational_content.add_step(WorkflowStep(
+            step_type="add_visuals",
+            parameters={"use_animations": True, "highlight_key_points": True},
+            description="Add explanatory visuals"
+        ))
+        educational_content.add_step(WorkflowStep(
+            step_type="add_summary",
+            parameters={"recap_key_points": True},
+            description="Add summary and recap"
+        ))
+        self.skills[educational_content.skill_id] = educational_content
+        
+        social_media_optimized = Skill(
+            name="Social Media Optimized",
+            description="Create videos optimized for social media platforms",
+            skill_type=SkillType.STYLING,
+            difficulty=SkillDifficulty.BEGINNER,
+            tags=["social", "instagram", "tiktok", "youtube", "reels"],
+            is_builtin=True,
+            author="Dreamix"
+        )
+        social_media_optimized.add_step(WorkflowStep(
+            step_type="optimize_aspect_ratio",
+            parameters={"ratio": "9:16", "platform": "general"},
+            description="Optimize for vertical viewing"
+        ))
+        social_media_optimized.add_step(WorkflowStep(
+            step_type="add_captions",
+            parameters={"auto_generated": True, "large_text": True},
+            description="Add prominent captions"
+        ))
+        social_media_optimized.add_step(WorkflowStep(
+            step_type="add_music",
+            parameters={"trending": True, "beat_sync": True},
+            description="Add trending music with beat sync"
+        ))
+        social_media_optimized.add_step(WorkflowStep(
+            step_type="add_hook",
+            parameters={"position": "start", "duration": 3.0},
+            description="Add attention-grabbing hook"
+        ))
+        self.skills[social_media_optimized.skill_id] = social_media_optimized
+        
+        documentary_style = Skill(
+            name="Documentary Style",
+            description="Create professional documentary-style videos",
+            skill_type=SkillType.COMPLETE,
+            difficulty=SkillDifficulty.ADVANCED,
+            tags=["documentary", "serious", "informative", "news"],
+            is_builtin=True,
+            author="Dreamix"
+        )
+        documentary_style.add_step(WorkflowStep(
+            step_type="color_grading",
+            parameters={"mood": "serious", "contrast": 1.1},
+            description="Apply documentary color grading"
+        ))
+        documentary_style.add_step(WorkflowStep(
+            step_type="add_voiceover",
+            parameters={"tone": "serious", "pace": "moderate"},
+            description="Add professional voiceover"
+        ))
+        documentary_style.add_step(WorkflowStep(
+            step_type="add_transitions",
+            parameters={"type": "dissolve", "duration": 1.5},
+            description="Add smooth dissolves"
+        ))
+        documentary_style.add_step(WorkflowStep(
+            step_type="add_music",
+            parameters={"genre": "instrumental", "volume": 0.2},
+            description="Add subtle background music"
+        ))
+        self.skills[documentary_style.skill_id] = documentary_style
 
     def add_skill(self, skill: Skill) -> None:
         self.skills[skill.skill_id] = skill
