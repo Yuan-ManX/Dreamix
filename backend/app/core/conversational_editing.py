@@ -28,6 +28,19 @@ class EditCommandType(Enum):
     CHANGE_MUSIC = "change_music"
     CHANGE_VOICEOVER = "change_voiceover"
     ADJUST_VOLUME = "adjust_volume"
+    TRIM_CLIP = "trim_clip"
+    SPLIT_CLIP = "split_clip"
+    SPEED_CHANGE = "speed_change"
+    ADD_CAPTION = "add_caption"
+    REMOVE_CAPTION = "remove_caption"
+    APPLY_SKILL = "apply_skill"
+    REMOVE_FILLERS = "remove_fillers"
+    GENERATE_ROUGH_CUT = "generate_rough_cut"
+    ADD_EFFECT = "add_effect"
+    REMOVE_EFFECT = "remove_effect"
+    CHANGE_ASPECT_RATIO = "change_aspect_ratio"
+    ADD_WATERMARK = "add_watermark"
+    REMOVE_WATERMARK = "remove_watermark"
 
 
 class TransitionType(Enum):
@@ -229,6 +242,19 @@ Possible command types:
 - change_music: Change background music
 - change_voiceover: Change voiceover
 - adjust_volume: Adjust audio volume
+- trim_clip: Trim a clip to specific start/end times
+- split_clip: Split a clip at a specific time
+- speed_change: Change playback speed of a clip
+- add_caption: Add captions or subtitles
+- remove_caption: Remove captions
+- apply_skill: Apply a predefined skill/workflow
+- remove_fillers: Remove filler words from speech
+- generate_rough_cut: Generate a rough cut with automatic cleanup
+- add_effect: Add visual or audio effects
+- remove_effect: Remove effects
+- change_aspect_ratio: Change video aspect ratio
+- add_watermark: Add a watermark
+- remove_watermark: Remove watermark
 
 Respond in JSON format:
 {{
@@ -243,24 +269,39 @@ Respond in JSON format:
         "transition_type": null or string,
         "music_track": null or string,
         "voice_profile": null or string,
-        "volume_level": null or number
+        "volume_level": null or number,
+        "start_time": null or number,
+        "end_time": null or number,
+        "split_time": null or number,
+        "speed_multiplier": null or number,
+        "caption_text": null or string,
+        "skill_name": null or string,
+        "skill_id": null or string,
+        "effect_type": null or string,
+        "aspect_ratio": null or string,
+        "watermark_text": null or string,
+        "remove_fillers": null or boolean,
+        "remove_repeats": null or boolean,
+        "remove_disfluencies": null or boolean
     }},
     "description": "brief description of the edit"
 }}
 
 Only return the JSON, no other text."""
 
-            response = await self.llm_service.generate(
-                prompt=prompt,
+            messages = [{"role": "user", "content": prompt}]
+            response = await self.llm_service.generate_completion(
+                messages=messages,
                 max_tokens=500,
                 temperature=0.3
             )
+            response_content = response["content"]
 
             try:
-                json_start = response.find('{')
-                json_end = response.rfind('}') + 1
+                json_start = response_content.find('{')
+                json_end = response_content.rfind('}') + 1
                 if json_start >= 0 and json_end > json_start:
-                    json_str = response[json_start:json_end]
+                    json_str = response_content[json_start:json_end]
                     parsed = json.loads(json_str)
                     
                     command_type = EditCommandType(parsed.get("command_type", "modify_script"))
@@ -326,7 +367,20 @@ class EditExecutor:
                 EditCommandType.REMOVE_TRANSITION,
                 EditCommandType.CHANGE_MUSIC,
                 EditCommandType.CHANGE_VOICEOVER,
-                EditCommandType.ADJUST_VOLUME
+                EditCommandType.ADJUST_VOLUME,
+                EditCommandType.TRIM_CLIP,
+                EditCommandType.SPLIT_CLIP,
+                EditCommandType.SPEED_CHANGE,
+                EditCommandType.ADD_CAPTION,
+                EditCommandType.REMOVE_CAPTION,
+                EditCommandType.APPLY_SKILL,
+                EditCommandType.REMOVE_FILLERS,
+                EditCommandType.GENERATE_ROUGH_CUT,
+                EditCommandType.ADD_EFFECT,
+                EditCommandType.REMOVE_EFFECT,
+                EditCommandType.CHANGE_ASPECT_RATIO,
+                EditCommandType.ADD_WATERMARK,
+                EditCommandType.REMOVE_WATERMARK
             ]:
                 timeline.updated_at = datetime.now()
                 return True
