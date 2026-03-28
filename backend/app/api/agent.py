@@ -17,10 +17,12 @@ class AgentMessageResponse(BaseModel):
     conversation_id: str
     message: str
     tool_used: bool
-    tool_call: Optional[Dict[str, Any]] = None
-    tool_result: Optional[Dict[str, Any]] = None
+    tool_calls: Optional[List[Dict[str, Any]]] = None
+    tool_results: Optional[List[Dict[str, Any]]] = None
     usage: Optional[Dict[str, int]] = None
     model: Optional[str] = None
+    agent_name: Optional[str] = None
+    agent_role: Optional[str] = None
     error: Optional[str] = None
 
 
