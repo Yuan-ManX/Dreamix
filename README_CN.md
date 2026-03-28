@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/Dreamix-Logo.jpeg" alt="Dreamix Logo" width="65%"/> 
+<img src="./assets/Dreamix-Logo.png" alt="Dreamix Logo" width="65%"/> 
 
 # Dreamix
 
