@@ -33,6 +33,22 @@ Whether you're a content creator, marketer, educator, or storyteller, Dreamix em
 
 ## ✨ Key Features
 
+### 🎬 Professional Timeline Editor
+- **Multi-Track Editing**: Full support for video, audio, text, and effect tracks with independent controls
+- **Drag & Drop Interface**: Intuitive clip management with drag, drop, and reordering
+- **Precision Timeline**: Frame-accurate editing with zoom controls and time markers
+- **Track Management**: Lock, mute, and adjust volume for individual tracks
+- **Clip Operations**: Cut, trim, split, and merge clips with professional precision
+- **Transition Library**: 10+ built-in transition effects including fade, dissolve, slide, wipe, and zoom
+
+### 🎨 Enhanced Video Preview
+- **Real-Time Preview**: Instant visual feedback of your edits
+- **Frame Navigation**: Step through video frame by frame for precise editing
+- **Waveform Visualization**: Audio waveform display for perfect timing alignment
+- **Aspect Ratio Support**: Multiple aspect ratios (16:9, 9:16, 1:1, 4:3) for different platforms
+- **Playback Controls**: Variable speed playback (0.5x - 2x), frame stepping, and loop modes
+- **Hover Preview**: Quick frame preview when hovering over timeline
+
 ### 🤖 Intelligent Agent Platform
 - **Multi-LLM Support**: Works seamlessly with major LLM providers (Anthropic, OpenAI, and more) via LiteLLM
 - **Extensive Tool System**: Comprehensive toolkit including web search, web scraping, file management, command execution, data analysis, and media search
@@ -82,6 +98,13 @@ Whether you're a content creator, marketer, educator, or storyteller, Dreamix em
 - **Font Recommendations**: Smart font suggestions based on content style and mood
 - **Beat Syncing**: Automatic music beat synchronization with video content
 - **Audio Timing**: Precision audio timing and synchronization tools
+
+### 💾 Advanced Project Management
+- **Project Persistence**: Save and load complete video projects with full timeline state
+- **Undo/Redo History**: Full edit history with unlimited undo/redo capabilities
+- **Version Control**: Track changes and revert to previous versions
+- **Project Metadata**: Customizable project settings including resolution, frame rate, and aspect ratio
+- **Clip Properties**: Detailed clip metadata and property editing panel
 
 ## 🏗️ Architecture
 
@@ -213,11 +236,23 @@ Dreamix's AI agent can help with various tasks:
 
 ### Exploring the Dashboard
 
+- **Editor**: Professional timeline editor with multi-track support for precise video editing
 - **Chat**: Main interface for creating and editing videos through conversation
 - **Skills**: Browse and use pre-built video creation skills, or create your own
 - **History**: View and manage your previously created videos
 - **Media Library**: Enhanced media asset management with search and tagging
 - **Settings**: Configure your profile, API keys, and preferences
+
+### Using the Professional Timeline Editor
+
+1. **Open the Editor**: Navigate to the Editor page from the sidebar
+2. **Add Clips**: Click "Add Clip" to import media or use the drag-and-drop interface
+3. **Arrange Clips**: Drag clips along the timeline or between tracks
+4. **Edit Clips**: Select a clip to view and edit its properties in the sidebar
+5. **Add Transitions**: Use the transitions library to add smooth effects between clips
+6. **Split & Trim**: Use the split tool to divide clips at specific times
+7. **Undo/Redo**: Use keyboard shortcuts (Ctrl+Z/Ctrl+Shift+Z) to undo or redo changes
+8. **Save & Export**: Save your project and export when ready
 
 ## 🧪 Testing
 
@@ -273,10 +308,6 @@ If you like this project, please ⭐ star the repo. Your support helps us grow!
     <img src="https://api.star-history.com/svg?repos=Yuan-ManX/Dreamix&type=Date" />
   </a>
 </p>
-
-## 🙏 Acknowledgments
-
-Dreamix stands on the shoulders of incredible open-source projects and the broader AI community. We're grateful for all the innovations that make this possible.
 
 ---
 
