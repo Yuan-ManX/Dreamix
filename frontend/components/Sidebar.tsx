@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', href: '/', icon: '🏠' },
-  { id: 'chat', label: 'Chat', href: '/chat', icon: '💬' },
-  { id: 'scripts', label: 'Scripts', href: '/scripts', icon: '📝' },
-  { id: 'media', label: 'Media', href: '/media', icon: '🎬' },
-  { id: 'skills', label: 'Skills', href: '/skills', icon: '✨' },
-  { id: 'settings', label: 'Settings', href: '/settings', icon: '⚙️' },
+  { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: '🏠' },
+  { id: 'editor', label: 'Editor', href: '/dashboard/editor', icon: '✂️' },
+  { id: 'chat', label: 'Chat', href: '/dashboard/chat', icon: '💬' },
+  { id: 'scripts', label: 'Scripts', href: '/dashboard/scripts', icon: '📝' },
+  { id: 'media', label: 'Media', href: '/dashboard/media', icon: '🎬' },
+  { id: 'skills', label: 'Skills', href: '/dashboard/skills', icon: '✨' },
+  { id: 'history', label: 'History', href: '/dashboard/history', icon: '📜' },
+  { id: 'settings', label: 'Settings', href: '/dashboard/settings', icon: '⚙️' },
 ]
 
 export default function Sidebar() {
