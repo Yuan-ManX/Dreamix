@@ -42,9 +42,9 @@ export default function EditorPage() {
   ])
 
   const [tracks, setTracks] = useState<TimelineTrack[]>([
-    { id: 'video-1', type: 'video', name: 'Video Track 1', locked: false, muted: false },
-    { id: 'audio-1', type: 'audio', name: 'Audio Track 1', locked: false, muted: false },
-    { id: 'text-1', type: 'text', name: 'Text Track 1', locked: false, muted: false }
+    { id: 'video-1', type: 'video', name: 'Video Track 1', locked: false, muted: false, volume: 1 },
+    { id: 'audio-1', type: 'audio', name: 'Audio Track 1', locked: false, muted: false, volume: 1 },
+    { id: 'text-1', type: 'text', name: 'Text Track 1', locked: false, muted: false, volume: 1 }
   ])
 
   const [currentTime, setCurrentTime] = useState(0)
