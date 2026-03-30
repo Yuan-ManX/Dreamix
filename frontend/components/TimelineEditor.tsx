@@ -15,10 +15,11 @@ export interface TimelineClip {
 
 export interface TimelineTrack {
   id: string
-  type: 'video' | 'audio' | 'text'
+  type: 'video' | 'audio' | 'text' | 'effect'
   name: string
   locked: boolean
   muted: boolean
+  volume: number
 }
 
 interface TimelineEditorProps {
@@ -27,6 +28,7 @@ interface TimelineEditorProps {
   currentTime: number
   totalDuration: number
   zoom: number
+  selectedClipId?: string | null
   onClipDrag?: (clipId: string, newStartTime: number, newTrack: number) => void
   onClipResize?: (clipId: string, newDuration: number) => void
   onClipClick?: (clipId: string) => void
@@ -34,6 +36,13 @@ interface TimelineEditorProps {
   onAddClip?: (trackId: string, time: number) => void
   onDeleteClip?: (clipId: string) => void
   onSplitClip?: (clipId: string, time: number) => void
+  onAddTrack?: (type: TimelineTrack['type']) => void
+  onUpdateTrack?: (trackId: string, updates: Partial<TimelineTrack>) => void
+  onDeleteTrack?: (trackId: string) => void
+  onUndo?: () => void
+  onRedo?: () => void
+  canUndo?: boolean
+  canRedo?: boolean
 }
 
 export default function TimelineEditor({
@@ -42,19 +51,28 @@ export default function TimelineEditor({
   currentTime,
   totalDuration,
   zoom,
+  selectedClipId,
   onClipDrag,
   onClipResize,
   onClipClick,
   onTimeChange,
   onAddClip,
   onDeleteClip,
-  onSplitClip
+  onSplitClip,
+  onAddTrack,
+  onUpdateTrack,
+  onDeleteTrack,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo
 }: TimelineEditorProps) {
   const timelineRef = useRef<HTMLDivElement>(null)
   const playheadRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [draggingClip, setDraggingClip] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const [dragTrack, setDragTrack] = useState(0)
 
   const pixelsPerSecond = 50 * zoom
   const timelineWidth = Math.max(totalDuration * pixelsPerSecond, 800)
@@ -81,6 +99,7 @@ export default function TimelineEditor({
   const handleClipMouseDown = (e: React.MouseEvent, clip: TimelineClip) => {
     e.stopPropagation()
     setDraggingClip(clip.id)
+    setDragTrack(clip.track)
     setDragOffset({
       x: e.clientX - timeToX(clip.startTime),
       y: 0
@@ -96,7 +115,20 @@ export default function TimelineEditor({
     const x = e.clientX - rect.left - dragOffset.x
     const newStartTime = Math.max(0, xToTime(x))
     
-    onClipDrag?.(draggingClip, newStartTime, 0)
+    const tracksContainer = timelineRef.current.querySelector('.tracks-container')
+    if (tracksContainer) {
+      const trackElements = tracksContainer.querySelectorAll('.track-row')
+      trackElements.forEach((trackEl, idx) => {
+        const trackRect = trackEl.getBoundingClientRect()
+        if (e.clientY >= trackRect.top && e.clientY <= trackRect.bottom) {
+          if (idx !== dragTrack) {
+            setDragTrack(idx)
+          }
+        }
+      })
+    }
+    
+    onClipDrag?.(draggingClip, newStartTime, dragTrack)
   }
 
   const handleMouseUp = () => {
@@ -104,17 +136,8 @@ export default function TimelineEditor({
     setDraggingClip(null)
   }
 
-  const getTrackClips = (trackId: string) => {
-    return clips.filter(clip => {
-      const track = tracks.find(t => t.id === trackId)
-      if (!track) return false
-      return (
-        (track.type === 'video' && clip.type === 'video') ||
-        (track.type === 'video' && clip.type === 'image') ||
-        (track.type === 'audio' && clip.type === 'audio') ||
-        (track.type === 'text' && clip.type === 'text')
-      )
-    })
+  const getTrackClips = (trackIndex: number) => {
+    return clips.filter(clip => clip.track === trackIndex)
   }
 
   const getClipColor = (type: string) => {
@@ -122,9 +145,18 @@ export default function TimelineEditor({
       video: 'bg-purple-500',
       audio: 'bg-green-500',
       image: 'bg-blue-500',
-      text: 'bg-yellow-500'
+      text: 'bg-yellow-500',
+      effect: 'bg-pink-500'
     }
     return colors[type] || 'bg-gray-500'
+  }
+
+  const handleTrackToggleMute = (trackId: string, currentMuted: boolean) => {
+    onUpdateTrack?.(trackId, { muted: !currentMuted })
+  }
+
+  const handleTrackToggleLock = (trackId: string, currentLocked: boolean) => {
+    onUpdateTrack?.(trackId, { locked: !currentLocked })
   }
 
   return (
@@ -135,26 +167,65 @@ export default function TimelineEditor({
           <div className="flex items-center gap-2">
             <button 
               className="px-3 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
-              onClick={() => onAddClip?.('video-1', currentTime)}
+              onClick={() => onUndo?.()}
+              disabled={!canUndo}
+            >
+              ↶ Undo
+            </button>
+            <button 
+              className="px-3 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
+              onClick={() => onRedo?.()}
+              disabled={!canRedo}
+            >
+              ↷ Redo
+            </button>
+            <div className="h-6 w-px bg-slate-600" />
+            <button 
+              className="px-3 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
+              onClick={() => onAddClip?.(tracks[0]?.id || 'video-1', currentTime)}
             >
               + Add Clip
             </button>
             <button 
               className="px-3 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
-              onClick={() => onSplitClip?.(clips[0]?.id || '', currentTime)}
+              onClick={() => onSplitClip?.(selectedClipId || '', currentTime)}
+              disabled={!selectedClipId}
             >
               Split
             </button>
             <button 
               className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-              onClick={() => onDeleteClip?.(clips[0]?.id || '')}
+              onClick={() => selectedClipId && onDeleteClip?.(selectedClipId)}
+              disabled={!selectedClipId}
             >
               Delete
             </button>
           </div>
         </div>
-        <div className="text-white font-mono text-sm">
-          {formatTime(currentTime)} / {formatTime(totalDuration)}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <button 
+              className="px-2 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
+              onClick={() => onAddTrack?.('video')}
+            >
+              + Video Track
+            </button>
+            <button 
+              className="px-2 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
+              onClick={() => onAddTrack?.('audio')}
+            >
+              + Audio Track
+            </button>
+            <button 
+              className="px-2 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
+              onClick={() => onAddTrack?.('text')}
+            >
+              + Text Track
+            </button>
+          </div>
+          <div className="text-white font-mono text-sm">
+            {formatTime(currentTime)} / {formatTime(totalDuration)}
+          </div>
         </div>
       </div>
 
@@ -168,7 +239,6 @@ export default function TimelineEditor({
           ref={timelineRef}
           className="relative min-w-full"
           style={{ width: timelineWidth + 200 }}
-          onClick={handleTimelineClick}
         >
           <div className="sticky left-0 z-10 bg-slate-800 border-b border-slate-700">
             <div className="flex h-10 items-center">
@@ -204,56 +274,88 @@ export default function TimelineEditor({
             </div>
           </div>
 
-          {tracks.map((track) => (
-            <div key={track.id} className="flex border-b border-slate-700">
-              <div className="w-40 flex-shrink-0 p-3 bg-slate-800 border-r border-slate-700">
-                <div className="flex items-center justify-between">
-                  <span className="text-white text-sm font-medium">{track.name}</span>
-                  <div className="flex gap-1">
-                    <button className="text-slate-400 hover:text-white">
-                      {track.muted ? '🔇' : '🔊'}
-                    </button>
-                    <button className="text-slate-400 hover:text-white">
-                      {track.locked ? '🔒' : '🔓'}
-                    </button>
+          <div className="tracks-container" onClick={handleTimelineClick}>
+            {tracks.map((track, trackIndex) => (
+              <div key={track.id} className="track-row flex border-b border-slate-700">
+                <div className="w-40 flex-shrink-0 p-3 bg-slate-800 border-r border-slate-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white text-sm font-medium">{track.name}</span>
+                    <div className="flex gap-1">
+                      <button 
+                        className="text-slate-400 hover:text-white"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleTrackToggleMute(track.id, track.muted)
+                        }}
+                      >
+                        {track.muted ? '🔇' : '🔊'}
+                      </button>
+                      <button 
+                        className="text-slate-400 hover:text-white"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleTrackToggleLock(track.id, track.locked)
+                        }}
+                      >
+                        {track.locked ? '🔒' : '🔓'}
+                      </button>
+                      {tracks.length > 1 && (
+                        <button 
+                          className="text-slate-400 hover:text-red-400"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onDeleteTrack?.(track.id)
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex-1 relative h-20 bg-slate-850">
-                <div className="absolute inset-0">
-                  {Array.from({ length: Math.ceil(totalDuration / 1) + 1 }).map((_, i) => (
+                <div className="flex-1 relative h-20 bg-slate-850">
+                  <div className="absolute inset-0">
+                    {Array.from({ length: Math.ceil(totalDuration / 1) + 1 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute top-0 h-full w-px bg-slate-700/50"
+                        style={{ left: timeToX(i) }}
+                      />
+                    ))}
+                  </div>
+
+                  {getTrackClips(trackIndex).map((clip) => (
                     <div
-                      key={i}
-                      className="absolute top-0 h-full w-px bg-slate-700/50"
-                      style={{ left: timeToX(i) }}
-                    />
+                      key={clip.id}
+                      className={`absolute top-2 bottom-2 rounded cursor-pointer select-none transition-all border-2 ${getClipColor(clip.type)} ${
+                        selectedClipId === clip.id ? 'border-white' : 'border-transparent'
+                      } ${
+                        isDragging && draggingClip === clip.id ? 'opacity-70 scale-[1.02] z-10' : 'hover:brightness-110'
+                      }`}
+                      style={{
+                        left: timeToX(clip.startTime),
+                        width: Math.max(timeToX(clip.duration), 40)
+                      }}
+                      onMouseDown={(e) => !track.locked && handleClipMouseDown(e, clip)}
+                    >
+                      <div className="h-full flex items-center px-2 overflow-hidden">
+                        <span className="text-white text-xs font-medium truncate">
+                          {clip.title}
+                        </span>
+                      </div>
+                      {!track.locked && (
+                        <>
+                          <div className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30" />
+                          <div className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30" />
+                        </>
+                      )}
+                    </div>
                   ))}
                 </div>
-
-                {getTrackClips(track.id).map((clip) => (
-                  <div
-                    key={clip.id}
-                    className={`absolute top-2 bottom-2 rounded cursor-pointer select-none transition-all ${getClipColor(clip.type)} ${
-                      isDragging && draggingClip === clip.id ? 'opacity-70 scale-[1.02]' : 'hover:brightness-110'
-                    }`}
-                    style={{
-                      left: timeToX(clip.startTime),
-                      width: Math.max(timeToX(clip.duration), 40)
-                    }}
-                    onMouseDown={(e) => handleClipMouseDown(e, clip)}
-                  >
-                    <div className="h-full flex items-center px-2 overflow-hidden">
-                      <span className="text-white text-xs font-medium truncate">
-                        {clip.title}
-                      </span>
-                    </div>
-                    <div className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30" />
-                  </div>
-                ))}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
