@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, ReactNode, useMemo } from 'react'
 
 export interface TimelineClip {
   id: string
@@ -18,7 +18,7 @@ export interface TimelineClip {
 
 export interface TimelineTrack {
   id: string
-  type: 'video' | 'audio' | 'text'
+  type: 'video' | 'audio' | 'text' | 'effect'
   name: string
   locked: boolean
   muted: boolean
@@ -37,7 +37,6 @@ export interface VideoProject {
   transitions: any[]
   createdAt: string
   updatedAt: string
-  totalDuration: number
 }
 
 interface ProjectState {
@@ -49,6 +48,9 @@ interface ProjectState {
   selectedClipId: string | null
   history: VideoProject[]
   historyIndex: number
+  isPlaying: boolean
+  playbackRate: number
+  aspectRatio: '16:9' | '9:16' | '1:1' | '4:3'
 }
 
 interface ProjectActions {
@@ -58,15 +60,24 @@ interface ProjectActions {
   setCurrentTime: (time: number) => void
   setZoom: (zoom: number) => void
   setSelectedClipId: (clipId: string | null) => void
+  setIsPlaying: (playing: boolean) => void
+  setPlaybackRate: (rate: number) => void
+  setAspectRatio: (ratio: '16:9' | '9:16' | '1:1' | '4:3') => void
   addClip: (clip: TimelineClip) => void
   updateClip: (clipId: string, updates: Partial<TimelineClip>) => void
   deleteClip: (clipId: string) => void
   splitClip: (clipId: string, splitTime: number) => void
+  addTrack: (track: TimelineTrack) => void
+  updateTrack: (trackId: string, updates: Partial<TimelineTrack>) => void
+  deleteTrack: (trackId: string) => void
   saveState: () => void
   undo: () => void
   redo: () => void
   canUndo: boolean
   canRedo: boolean
+  clips: TimelineClip[]
+  tracks: TimelineTrack[]
+  totalDuration: number
 }
 
 const ProjectContext = createContext<(ProjectState & ProjectActions) | undefined>(undefined)
@@ -80,8 +91,18 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     zoom: 1,
     selectedClipId: null,
     history: [],
-    historyIndex: -1
+    historyIndex: -1,
+    isPlaying: false,
+    playbackRate: 1,
+    aspectRatio: '16:9'
   })
+
+  const clips = useMemo(() => state.currentProject?.clips || [], [state.currentProject?.clips])
+  const tracks = useMemo(() => state.currentProject?.tracks || [], [state.currentProject?.tracks])
+  const totalDuration = useMemo(() => {
+    if (!state.currentProject?.clips.length) return 0
+    return Math.max(...state.currentProject.clips.map(c => c.startTime + c.duration))
+  }, [state.currentProject?.clips])
 
   const saveState = useCallback(() => {
     if (!state.currentProject) return
@@ -218,6 +239,56 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     })
   }, [saveState])
 
+  const addTrack = useCallback((track: TimelineTrack) => {
+    saveState()
+    setState(prev => {
+      if (!prev.currentProject) return prev
+      return {
+        ...prev,
+        currentProject: {
+          ...prev.currentProject,
+          tracks: [...prev.currentProject.tracks, track],
+          updatedAt: new Date().toISOString()
+        }
+      }
+    })
+  }, [saveState])
+
+  const updateTrack = useCallback((trackId: string, updates: Partial<TimelineTrack>) => {
+    saveState()
+    setState(prev => {
+      if (!prev.currentProject) return prev
+      return {
+        ...prev,
+        currentProject: {
+          ...prev.currentProject,
+          tracks: prev.currentProject.tracks.map(track =>
+            track.id === trackId ? { ...track, ...updates } : track
+          ),
+          updatedAt: new Date().toISOString()
+        }
+      }
+    })
+  }, [saveState])
+
+  const deleteTrack = useCallback((trackId: string) => {
+    saveState()
+    setState(prev => {
+      if (!prev.currentProject) return prev
+      const trackIndex = prev.currentProject.tracks.findIndex(t => t.id === trackId)
+      if (trackIndex === -1) return prev
+      return {
+        ...prev,
+        currentProject: {
+          ...prev.currentProject,
+          tracks: prev.currentProject.tracks.filter(track => track.id !== trackId),
+          clips: prev.currentProject.clips.filter(clip => clip.track !== trackIndex),
+          updatedAt: new Date().toISOString()
+        }
+      }
+    })
+  }, [saveState])
+
   const value: ProjectState & ProjectActions = {
     ...state,
     setCurrentProject: (project) => setState(prev => ({ ...prev, currentProject: project })),
@@ -226,15 +297,24 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     setCurrentTime: (time) => setState(prev => ({ ...prev, currentTime: time })),
     setZoom: (zoom) => setState(prev => ({ ...prev, zoom })),
     setSelectedClipId: (clipId) => setState(prev => ({ ...prev, selectedClipId: clipId })),
+    setIsPlaying: (playing) => setState(prev => ({ ...prev, isPlaying: playing })),
+    setPlaybackRate: (rate) => setState(prev => ({ ...prev, playbackRate: rate })),
+    setAspectRatio: (ratio) => setState(prev => ({ ...prev, aspectRatio: ratio })),
     addClip,
     updateClip,
     deleteClip,
     splitClip,
+    addTrack,
+    updateTrack,
+    deleteTrack,
     saveState,
     undo,
     redo,
     canUndo: state.historyIndex > 0,
-    canRedo: state.historyIndex < state.history.length - 1
+    canRedo: state.historyIndex < state.history.length - 1,
+    clips,
+    tracks,
+    totalDuration
   }
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
