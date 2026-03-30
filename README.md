@@ -35,11 +35,14 @@ Whether you're a content creator, marketer, educator, or storyteller, Dreamix em
 
 ### 🎬 Professional Timeline Editor
 - **Multi-Track Editing**: Full support for video, audio, text, and effect tracks with independent controls
-- **Drag & Drop Interface**: Intuitive clip management with drag, drop, and reordering
+- **Drag & Drop Interface**: Intuitive clip management with drag, drop, and reordering between tracks
 - **Precision Timeline**: Frame-accurate editing with zoom controls and time markers
 - **Track Management**: Lock, mute, and adjust volume for individual tracks
 - **Clip Operations**: Cut, trim, split, and merge clips with professional precision
 - **Transition Library**: 10+ built-in transition effects including fade, dissolve, slide, wipe, and zoom
+- **Clip Selection**: Visual selection and property editing for individual clips
+- **Track Operations**: Add, remove, and manage multiple video, audio, and text tracks
+- **History System**: Comprehensive undo/redo functionality for all editing operations
 
 ### 🎨 Enhanced Video Preview
 - **Real-Time Preview**: Instant visual feedback of your edits
