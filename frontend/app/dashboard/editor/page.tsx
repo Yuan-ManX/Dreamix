@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import ChatInterface from '@/components/ChatInterface'
 import VideoPreview from '@/components/VideoPreview'
 import TimelineEditor from '@/components/TimelineEditor'
@@ -10,6 +10,7 @@ function EditorContent() {
   const {
     currentProject,
     setCurrentProject,
+    createNewProject,
     clips,
     tracks,
     currentTime,
@@ -22,12 +23,16 @@ function EditorContent() {
     isLoading,
     canUndo,
     canRedo,
+    volume,
+    isMuted,
     setCurrentTime,
     setZoom,
     setSelectedClipId,
     setIsPlaying,
     setPlaybackRate,
     setAspectRatio,
+    setVolume,
+    setIsMuted,
     addClip,
     updateClip,
     deleteClip,
@@ -41,11 +46,7 @@ function EditorContent() {
 
   useEffect(() => {
     if (!currentProject) {
-      const defaultTracks: TimelineTrack[] = [
-        { id: 'video-1', type: 'video', name: 'Video Track 1', locked: false, muted: false, volume: 1 },
-        { id: 'audio-1', type: 'audio', name: 'Audio Track 1', locked: false, muted: false, volume: 1 },
-        { id: 'text-1', type: 'text', name: 'Text Track 1', locked: false, muted: false, volume: 1 }
-      ]
+      const project = createNewProject('My First Project', 'A new video project')
       
       const defaultClips: TimelineClip[] = [
         {
@@ -87,31 +88,21 @@ function EditorContent() {
       ]
 
       setCurrentProject({
-        projectId: 'default',
-        name: 'Untitled Project',
-        description: 'A new video project',
-        width: 1920,
-        height: 1080,
-        fps: 30,
-        tracks: defaultTracks,
-        clips: defaultClips,
-        transitions: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        totalDuration: 30
+        ...project,
+        clips: defaultClips
       })
     }
-  }, [currentProject, setCurrentProject])
+  }, [currentProject, setCurrentProject, createNewProject])
 
-  const handleClipDrag = (clipId: string, newStartTime: number, newTrack: number) => {
+  const handleClipDrag = useCallback((clipId: string, newStartTime: number, newTrack: number) => {
     updateClip(clipId, { startTime: newStartTime, track: newTrack })
-  }
+  }, [updateClip])
 
-  const handleClipResize = (clipId: string, newDuration: number) => {
+  const handleClipResize = useCallback((clipId: string, newDuration: number) => {
     updateClip(clipId, { duration: newDuration })
-  }
+  }, [updateClip])
 
-  const handleAddClip = (trackId: string, time: number) => {
+  const handleAddClip = useCallback((trackId: string, time: number) => {
     const trackIndex = tracks.findIndex(t => t.id === trackId)
     const newClip: TimelineClip = {
       id: Date.now().toString(),
@@ -122,9 +113,9 @@ function EditorContent() {
       track: trackIndex >= 0 ? trackIndex : 0
     }
     addClip(newClip)
-  }
+  }, [tracks, addClip])
 
-  const handleAddTrack = (type: TimelineTrack['type']) => {
+  const handleAddTrack = useCallback((type: TimelineTrack['type']) => {
     const trackTypeNames: Record<string, string> = {
       video: 'Video Track',
       audio: 'Audio Track',
@@ -140,7 +131,7 @@ function EditorContent() {
       muted: false,
       volume: 1
     })
-  }
+  }, [tracks, addTrack])
 
   const videoPreviewClips = clips.map(clip => ({
     id: clip.id,
@@ -164,11 +155,11 @@ function EditorContent() {
 
   return (
     <div className="flex flex-col h-full bg-slate-950">
-      <div className="h-14 bg-slate-900 border-b border-slate-700 flex items-center px-6 gap-4">
+      <div className="h-16 bg-slate-900 border-b border-slate-700 flex items-center px-6 gap-4">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🎬</span>
+          <span className="text-3xl">🎬</span>
           <div>
-            <h1 className="font-semibold text-white">{currentProject.name}</h1>
+            <h1 className="font-semibold text-white text-lg">{currentProject.name}</h1>
             <p className="text-xs text-slate-500">{currentProject.width}x{currentProject.height} • {currentProject.fps}fps</p>
           </div>
         </div>
@@ -177,7 +168,7 @@ function EditorContent() {
           <select
             value={aspectRatio}
             onChange={(e) => setAspectRatio(e.target.value as any)}
-            className="bg-slate-800 text-white text-sm px-3 py-1.5 rounded-lg border border-slate-700"
+            className="bg-slate-800 text-white text-sm px-4 py-2 rounded-lg border border-slate-700 focus:outline-none focus:border-purple-500"
           >
             <option value="16:9">16:9 (Landscape)</option>
             <option value="9:16">9:16 (Portrait)</option>
@@ -186,11 +177,11 @@ function EditorContent() {
           </select>
         </div>
         <div className="flex-1" />
-        <div className="flex items-center gap-2">
-          <button className="px-4 py-2 text-sm bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">
+        <div className="flex items-center gap-3">
+          <button className="px-5 py-2 text-sm bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 flex items-center gap-2">
             💾 Save
           </button>
-          <button className="px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg hover:from-purple-500 hover:to-purple-400 transition-all shadow-lg shadow-purple-500/20">
+          <button className="px-5 py-2 text-sm bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg hover:from-purple-500 hover:to-purple-400 transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2">
             🎥 Export
           </button>
         </div>
@@ -204,7 +195,7 @@ function EditorContent() {
         </div>
 
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="h-96 bg-slate-900 flex-shrink-0 border-b border-slate-700 p-4">
+          <div className="h-[420px] bg-slate-900 flex-shrink-0 border-b border-slate-700 p-4">
             <VideoPreview
               clips={videoPreviewClips}
               currentTime={currentTime}
@@ -212,6 +203,10 @@ function EditorContent() {
               isPlaying={isPlaying}
               onPlayPause={setIsPlaying}
               aspectRatio={aspectRatio}
+              volume={volume}
+              onVolumeChange={setVolume}
+              isMuted={isMuted}
+              onMuteChange={setIsMuted}
               playbackRate={playbackRate}
               onPlaybackRateChange={setPlaybackRate}
             />
@@ -239,65 +234,67 @@ function EditorContent() {
               onRedo={redo}
               canUndo={canUndo}
               canRedo={canRedo}
+              onZoomChange={setZoom}
             />
           </div>
         </div>
 
-        <div className="w-72 flex-shrink-0 border-l border-slate-700 bg-slate-900 overflow-y-auto">
-          <div className="p-4">
-            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-              <span>⚙️</span> Properties
+        <div className="w-80 flex-shrink-0 border-l border-slate-700 bg-slate-900 overflow-y-auto">
+          <div className="p-5">
+            <h3 className="font-semibold text-white mb-5 flex items-center gap-2 text-lg">
+              <span>⚙️</span>
+              Properties
             </h3>
             
             {selectedClipId ? (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {(() => {
                   const clip = clips.find(c => c.id === selectedClipId)
                   if (!clip) return null
                   return (
                     <>
                       <div>
-                        <label className="block text-sm text-slate-400 mb-1.5">Title</label>
+                        <label className="block text-sm text-slate-400 mb-2 font-medium">Title</label>
                         <input
                           type="text"
                           value={clip.title}
-                          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500"
+                          className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                           onChange={(e) => updateClip(clip.id, { title: e.target.value })}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm text-slate-400 mb-1.5">Type</label>
-                        <div className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-300">
+                        <label className="block text-sm text-slate-400 mb-2 font-medium">Type</label>
+                        <div className="px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-300 font-medium">
                           {clip.type.toUpperCase()}
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm text-slate-400 mb-1.5">Start Time</label>
+                          <label className="block text-sm text-slate-400 mb-2 font-medium">Start Time</label>
                           <input
                             type="number"
                             value={clip.startTime}
-                            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500"
+                            className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                             step={0.1}
                             onChange={(e) => updateClip(clip.id, { startTime: parseFloat(e.target.value) || 0 })}
                           />
                         </div>
                         <div>
-                          <label className="block text-sm text-slate-400 mb-1.5">Duration</label>
+                          <label className="block text-sm text-slate-400 mb-2 font-medium">Duration</label>
                           <input
                             type="number"
                             value={clip.duration}
-                            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500"
+                            className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                             step={0.1}
                             onChange={(e) => updateClip(clip.id, { duration: parseFloat(e.target.value) || 0 })}
                           />
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm text-slate-400 mb-1.5">Track</label>
+                        <label className="block text-sm text-slate-400 mb-2 font-medium">Track</label>
                         <select
                           value={clip.track}
-                          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500"
+                          className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                           onChange={(e) => updateClip(clip.id, { track: parseInt(e.target.value) })}
                         >
                           {tracks.map((track, idx) => (
@@ -305,10 +302,10 @@ function EditorContent() {
                           ))}
                         </select>
                       </div>
-                      <div className="pt-4 border-t border-slate-700">
+                      <div className="pt-5 border-t border-slate-700">
                         <button
                           onClick={() => deleteClip(clip.id)}
-                          className="w-full px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm font-medium"
+                          className="w-full px-4 py-3 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm font-medium flex items-center justify-center gap-2"
                         >
                           🗑️ Delete Clip
                         </button>
@@ -318,29 +315,30 @@ function EditorContent() {
                 })()}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-3">🎬</div>
+              <div className="text-center py-12">
+                <div className="text-5xl mb-4">🎬</div>
                 <p className="text-sm text-slate-500">Select a clip to edit properties</p>
               </div>
             )}
           </div>
           
-          <div className="p-4 border-t border-slate-700">
-            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-              <span>📊</span> Project Stats
+          <div className="p-5 border-t border-slate-700">
+            <h3 className="font-semibold text-white mb-5 flex items-center gap-2 text-lg">
+              <span>📊</span>
+              Project Stats
             </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-sm">Total Clips</span>
-                <span className="text-white font-mono">{clips.length}</span>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                <span className="text-slate-400 text-sm font-medium">Total Clips</span>
+                <span className="text-white font-mono text-lg">{clips.length}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-sm">Tracks</span>
-                <span className="text-white font-mono">{tracks.length}</span>
+              <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                <span className="text-slate-400 text-sm font-medium">Tracks</span>
+                <span className="text-white font-mono text-lg">{tracks.length}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-sm">Duration</span>
-                <span className="text-white font-mono">{Math.round(totalDuration)}s</span>
+              <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                <span className="text-slate-400 text-sm font-medium">Duration</span>
+                <span className="text-white font-mono text-lg">{Math.round(totalDuration)}s</span>
               </div>
             </div>
           </div>
