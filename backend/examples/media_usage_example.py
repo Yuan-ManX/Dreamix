@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 """
 Media Processing System Usage Example
-This script demonstrates how to use the Dreamix media processing system
+This script demonstrates how to use the Action media processing system
 """
 
 import asyncio
@@ -45,7 +44,7 @@ async def create_sample_images(output_dir: str, num_images: int = 5) -> list:
 def example_media_file_usage():
     """Example of using MediaFile class"""
     print("\n=== MediaFile Example ===")
-    from app.core.media import MediaFile
+    from app.media.media import MediaFile
     
     with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
         temp_img_path = f.name
@@ -64,7 +63,7 @@ def example_media_file_usage():
 def example_media_storage_usage():
     """Example of using MediaStorage class"""
     print("\n=== MediaStorage Example ===")
-    from app.core.media import MediaStorage, get_media_storage
+    from app.media.media import MediaStorage, get_media_storage
     
     storage = get_media_storage()
     print(f"Storage path: {storage.storage_path}")
@@ -76,7 +75,7 @@ def example_media_storage_usage():
 def example_video_composition():
     """Example of using VideoComposer"""
     print("\n=== VideoComposer Example ===")
-    from app.core.media import VideoComposer
+    from app.media.media import VideoComposer
     
     temp_dir = tempfile.mkdtemp()
     try:
@@ -117,7 +116,7 @@ Available Media API Endpoints:
 def main():
     """Run all examples"""
     print("="*60)
-    print("Dreamix Media Processing System - Usage Examples")
+    print("Action Media Processing System - Usage Examples")
     print("="*60)
     
     try:
