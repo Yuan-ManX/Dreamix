@@ -201,7 +201,7 @@ class Agent:
         llm_service: Optional[LLMService] = None,
         tool_registry: Optional[ToolRegistry] = None,
         system_prompt: Optional[str] = None,
-        agent_name: str = "Dreamix Assistant",
+        agent_name: str = "Action Assistant",
         agent_role: str = "general"
     ):
         self.llm_service = llm_service or get_llm_service()
@@ -216,7 +216,7 @@ class Agent:
             f"- {tool.name}: {tool.description}"
             for tool in self.tool_registry.get_all_tools()
         ])
-        return f"""You are {self.agent_name}, a sophisticated AI assistant built on the Dreamix platform. 
+        return f"""You are {self.agent_name}, a sophisticated AI assistant built on the Action platform. 
 Your role is to help users with various tasks, leveraging your capabilities in intelligent analysis, 
 media creation, and problem-solving.
 
@@ -389,22 +389,22 @@ _agent: Optional[Agent] = None
 def get_agent() -> Agent:
     global _agent
     if _agent is None:
-        _agent = Agent(agent_name="Dreamix Assistant", agent_role="video_creation")
+        _agent = Agent(agent_name="Action Assistant", agent_role="video_creation")
     return _agent
 
 
 def create_specialized_agent(agent_role: str, system_prompt: Optional[str] = None) -> Agent:
     role_configs = {
         "video_creation": {
-            "name": "Dreamix Video Creator",
+            "name": "Action Video Creator",
             "prompt": None
         },
         "researcher": {
-            "name": "Dreamix Researcher",
+            "name": "Action Researcher",
             "prompt": None
         },
         "analyst": {
-            "name": "Dreamix Analyst",
+            "name": "Action Analyst",
             "prompt": None
         }
     }
