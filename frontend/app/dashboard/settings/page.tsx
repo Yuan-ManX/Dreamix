@@ -20,7 +20,7 @@ export default function SettingsPage() {
   const [showKeys, setShowKeys] = useState({ openai: false, anthropic: false })
 
   useEffect(() => {
-    const saved = localStorage.getItem('dreamix_settings')
+    const saved = localStorage.getItem('action_settings')
     if (saved) {
       setSettings(JSON.parse(saved))
     }
@@ -29,7 +29,7 @@ export default function SettingsPage() {
   const handleSave = () => {
     setSaveStatus('saving')
     setTimeout(() => {
-      localStorage.setItem('dreamix_settings', JSON.stringify(settings))
+      localStorage.setItem('action_settings', JSON.stringify(settings))
       setSaveStatus('success')
       setTimeout(() => setSaveStatus('idle'), 2000)
     }, 500)
@@ -44,7 +44,7 @@ export default function SettingsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-800 mb-2">Settings</h1>
-          <p className="text-slate-600">Configure your Dreamix preferences</p>
+          <p className="text-slate-600">Configure your Action preferences</p>
         </div>
 
         <div className="space-y-6">
