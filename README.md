@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/Dreamix-Logo.png" alt="Dreamix Logo" width="40%"/> 
+<img src="./assets/Action-Logo.png" alt="Action Logo" width="40%"/> 
 
 # Action! 🎬 🎮
 
@@ -14,8 +14,8 @@
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python Version">
   </a>
-  <a href="https://github.com/Yuan-ManX/Dreamix">
-    <img src="https://img.shields.io/github/stars/Yuan-ManX/Dreamix?style=social" alt="Stars">
+  <a href="https://github.com/Yuan-ManX/Action">
+    <img src="https://img.shields.io/github/stars/Yuan-ManX/Action?style=social" alt="Stars">
   </a>
 </p>
 
@@ -23,13 +23,13 @@
 
 </div>
 
-## 🌟 What is Dreamix?
+## 🌟 What is Action?
 
-Action! is an AI-native interactive video agent platform that transforms ideas into compelling video stories through natural language conversations. By combining a powerful AI agent infrastructure with advanced video creation capabilities, Dreamix democratizes high-quality video production, making it accessible to everyone from beginners to professionals.
+Action! is an AI-native interactive video agent platform that transforms ideas into compelling video stories through natural language conversations. By combining a powerful AI agent infrastructure with advanced video creation capabilities, Action democratizes high-quality video production, making it accessible to everyone from beginners to professionals.
 
-Dreamix features an intelligent generalist AI worker that handles research, data analysis, media processing, file management, and complex workflows – showcasing what's possible when building with Dreamix's advanced capabilities.
+Action features an intelligent generalist AI worker that handles research, data analysis, media processing, file management, and complex workflows – showcasing what's possible when building with Action's advanced capabilities.
 
-Whether you're a content creator, marketer, educator, or storyteller, Dreamix empowers you to bring your vision to life with unprecedented ease and creativity.
+Whether you're a content creator, marketer, educator, or storyteller, Action empowers you to bring your vision to life with unprecedented ease and creativity.
 
 ## ✨ Key Features
 
@@ -111,7 +111,7 @@ Whether you're a content creator, marketer, educator, or storyteller, Dreamix em
 
 ## 🏗️ Architecture
 
-Dreamix is built on a cohesive, modular architecture designed for scalability and extensibility:
+Action is built on a cohesive, modular architecture designed for scalability and extensibility:
 
 ### Core Components
 - **Backend API**: Python/FastAPI service powering agent orchestration, video processing, and enhanced media capabilities
@@ -171,7 +171,7 @@ npm install
 playwright install
 ```
 
-6. **Start Dreamix**
+6. **Start Action**
 ```bash
 cd ..
 python start.py
@@ -189,15 +189,15 @@ Open your browser and navigate to `http://localhost:3000`
 
 ### Creating Your First Video
 
-1. **Start a Conversation**: Tell Dreamix what kind of video you want to create
-2. **Provide Input**: Upload your media or let Dreamix find relevant content for you
-3. **Review the Script**: Dreamix will generate a complete script with scene descriptions
+1. **Start a Conversation**: Tell Action what kind of video you want to create
+2. **Provide Input**: Upload your media or let Action find relevant content for you
+3. **Review the Script**: Action will generate a complete script with scene descriptions
 4. **Refine Through Chat**: Make adjustments using natural language
 5. **Render & Export**: When you're satisfied, render your final video
 
 ### Using the Intelligent Agent
 
-Dreamix's AI agent can help with various tasks:
+Action's AI agent can help with various tasks:
 - **Web Research**: Ask it to research topics, find information, or analyze websites
 - **Data Analysis**: Request statistical analysis or data processing
 - **File Management**: Have it organize, create, or edit files
@@ -259,7 +259,7 @@ Dreamix's AI agent can help with various tasks:
 
 ## 🧪 Testing
 
-Dreamix includes comprehensive test suites for both backend and frontend components:
+Action includes comprehensive test suites for both backend and frontend components:
 
 ### Backend Tests
 ```bash
@@ -315,6 +315,6 @@ If you like this project, please ⭐ star the repo. Your support helps us grow!
 
 <div align="center">
 
-**Made with ❤️ by the Dreamix Team**
+**Made with ❤️ by the Action Team**
 
 </div>
