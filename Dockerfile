@@ -1,5 +1,5 @@
 # ==========================================
-# Dreamix - Unified Dockerfile (Multi-stage Build)
+# Action - Unified Dockerfile (Multi-stage Build)
 # ==========================================
 
 # ------------------------------
