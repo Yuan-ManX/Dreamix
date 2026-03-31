@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/Action-Logo.png" alt="Action Logo" width="40%"/> 
+<img src="./assets/Action-logo.jpeg" alt="Action Logo" width="60%"/> 
 
 # Action! 🎬 🎮
 
