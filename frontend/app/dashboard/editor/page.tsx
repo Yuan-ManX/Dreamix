@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import ChatInterface from '@/components/ChatInterface'
 import VideoPreview from '@/components/VideoPreview'
 import TimelineEditor from '@/components/TimelineEditor'
 import { ProjectProvider, useProject, TimelineClip, TimelineTrack } from '@/hooks/useProjectStore'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 function EditorContent() {
   const {
@@ -43,6 +44,114 @@ function EditorContent() {
     undo,
     redo
   } = useProject()
+
+  const shortcuts = useMemo(() => [
+    {
+      key: ' ',
+      preventDefault: true,
+      description: 'Play/Pause',
+      handler: () => setIsPlaying(!isPlaying)
+    },
+    {
+      key: 'z',
+      ctrl: true,
+      meta: true,
+      preventDefault: true,
+      description: 'Undo',
+      handler: () => canUndo && undo()
+    },
+    {
+      key: 'z',
+      ctrl: true,
+      meta: true,
+      shift: true,
+      preventDefault: true,
+      description: 'Redo',
+      handler: () => canRedo && redo()
+    },
+    {
+      key: 'y',
+      ctrl: true,
+      meta: true,
+      preventDefault: true,
+      description: 'Redo (alternative)',
+      handler: () => canRedo && redo()
+    },
+    {
+      key: 'ArrowLeft',
+      preventDefault: true,
+      description: 'Move back 1 second',
+      handler: () => setCurrentTime(Math.max(0, currentTime - 1))
+    },
+    {
+      key: 'ArrowRight',
+      preventDefault: true,
+      description: 'Move forward 1 second',
+      handler: () => setCurrentTime(Math.min(totalDuration, currentTime + 1))
+    },
+    {
+      key: 'ArrowLeft',
+      shift: true,
+      preventDefault: true,
+      description: 'Move back 5 seconds',
+      handler: () => setCurrentTime(Math.max(0, currentTime - 5))
+    },
+    {
+      key: 'ArrowRight',
+      shift: true,
+      preventDefault: true,
+      description: 'Move forward 5 seconds',
+      handler: () => setCurrentTime(Math.min(totalDuration, currentTime + 5))
+    },
+    {
+      key: 'Delete',
+      preventDefault: true,
+      description: 'Delete selected clip',
+      handler: () => selectedClipId && deleteClip(selectedClipId)
+    },
+    {
+      key: 'Backspace',
+      preventDefault: true,
+      description: 'Delete selected clip',
+      handler: () => selectedClipId && deleteClip(selectedClipId)
+    },
+    {
+      key: 'm',
+      preventDefault: true,
+      description: 'Mute/Unmute',
+      handler: () => setIsMuted(!isMuted)
+    },
+    {
+      key: '+',
+      ctrl: true,
+      meta: true,
+      preventDefault: true,
+      description: 'Zoom in',
+      handler: () => setZoom(Math.min(4, zoom + 0.25))
+    },
+    {
+      key: '-',
+      ctrl: true,
+      meta: true,
+      preventDefault: true,
+      description: 'Zoom out',
+      handler: () => setZoom(Math.max(0.25, zoom - 0.25))
+    },
+    {
+      key: 'Home',
+      preventDefault: true,
+      description: 'Go to start',
+      handler: () => setCurrentTime(0)
+    },
+    {
+      key: 'End',
+      preventDefault: true,
+      description: 'Go to end',
+      handler: () => setCurrentTime(totalDuration)
+    }
+  ], [isPlaying, canUndo, canRedo, currentTime, totalDuration, selectedClipId, isMuted, zoom, undo, redo, deleteClip, setIsPlaying, setCurrentTime, setIsMuted, setZoom])
+
+  useKeyboardShortcuts(shortcuts)
 
   useEffect(() => {
     if (!currentProject) {
