@@ -22,7 +22,7 @@ export default function Sidebar() {
   return (
     <div className={`flex flex-col h-full bg-slate-900 text-white transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
-        {!isCollapsed && <h1 className="text-xl font-bold">Dreamix</h1>}
+        {!isCollapsed && <h1 className="text-xl font-bold">Action</h1>}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2 rounded hover:bg-slate-700 transition-colors"
