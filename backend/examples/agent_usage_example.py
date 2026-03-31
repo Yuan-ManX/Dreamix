@@ -4,13 +4,13 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.core.agent import get_agent, ConversationStore
-from app.core.tools import get_tool_registry, initialize_default_tools, CalculatorTool
+from app.agent.agent import get_agent, ConversationStore
+from app.tools.tools import get_tool_registry, CalculatorTool
 
 
 async def example_list_tools():
     print("=== 列出所有可用工具 ===")
-    initialize_default_tools()
+    # Tools are initialized automatically when get_tool_registry() is called
     registry = get_tool_registry()
     tools = registry.list_tools()
     for tool in tools:
@@ -87,7 +87,7 @@ async def example_conversation_management():
 
 
 async def main():
-    print("Dreamix Agent 系统使用示例")
+    print("Action Agent 系统使用示例")
     print("=" * 50)
     
     await example_list_tools()
