@@ -43,14 +43,25 @@ Whether you're a content creator, marketer, educator, or storyteller, Action emp
 - **Clip Selection**: Visual selection and property editing for individual clips
 - **Track Operations**: Add, remove, and manage multiple video, audio, and text tracks
 - **History System**: Comprehensive undo/redo functionality for all editing operations
+- **Real-time Hover Preview**: Preview time indicator when hovering over timeline
+- **Advanced Clip Resizing**: Resize clips from both start and end points with visual feedback
+- **Smooth Zoom Controls**: Intuitive zoom controls with slider and button inputs
+- **Track Icons**: Visual icons for each track type for easy identification
+- **Clip Gradient Colors**: Beautiful gradient colors for different clip types
 
 ### 🎨 Video Preview
 - **Real-Time Preview**: Instant visual feedback of your edits
 - **Frame Navigation**: Step through video frame by frame for precise editing
-- **Waveform Visualization**: Audio waveform display for perfect timing alignment
+- **Waveform Visualization**: Beautiful audio waveform display with gradient colors for perfect timing alignment
 - **Aspect Ratio Support**: Multiple aspect ratios (16:9, 9:16, 1:1, 4:3) for different platforms
-- **Playback Controls**: Variable speed playback (0.5x - 2x), frame stepping, and loop modes
+- **Playback Controls**: Variable speed playback (0.25x - 2x), frame stepping, and loop modes
 - **Hover Preview**: Quick frame preview when hovering over timeline
+- **Enhanced Playback UI**: Beautiful gradient buttons with hover effects and smooth animations
+- **Volume Controls**: Integrated volume slider and mute toggle with visual feedback
+- **Clip Timeline List**: Visual clip list with active clip highlighting and click-to-seek
+- **Backdrop Blur Effects**: Modern UI with backdrop blur and depth effects
+- **Fullscreen Support**: Enter fullscreen mode for immersive preview experience
+- **Loop Functionality**: One-click loop playback for continuous preview
 
 ### 🤖 Intelligent Agent Platform
 - **Multi-LLM Support**: Works seamlessly with major LLM providers (Anthropic, OpenAI, and more) via LiteLLM
