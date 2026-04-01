@@ -52,6 +52,21 @@ Whether you're a content creator, marketer, educator, or storyteller, Action emp
 - **Clip Trimming**: Precise trimming from both start and end points
 - **Clip Reordering**: Flexible clip reordering within tracks
 - **Project Duplication**: Create complete copies of existing projects
+- **Clip Copying**: Duplicate clips with optional new start time positioning
+- **Clip Merging**: Combine multiple clips into a single unified clip
+- **Advanced Trimming**: Fine-grained trimming with customizable start and end offsets
+
+### 🎨 Effects & Transitions Panel
+- **Visual Effects Library**: Comprehensive collection of visual effects including blur, glow, sepia, black & white, invert, zoom, rotate, and flip
+- **Audio Effects Suite**: Professional audio effects including echo, reverb, pitch shift, speed control, fade in, and fade out
+- **Transitions Collection**: 12+ transition effects organized in categories including Classic, Slide, Wipe, Zoom, and Rotate
+- **Tabbed Interface**: Clean tabbed navigation for visual effects, audio effects, and transitions
+- **Search Functionality**: Quick search for effects by name or category
+- **Categorized Organization**: Effects organized in logical categories for easy browsing
+- **Visual Previews**: Each effect includes an icon and description for quick identification
+- **One-Click Application**: Simple click to apply effects or transitions to selected clips
+- **Dark Theme Design**: Beautiful dark theme with gradient accents and smooth animations
+- **Selection Indicator**: Visual feedback when a clip is selected and ready for effects
 
 ### 🎨 Video Preview
 - **Real-Time Preview**: Instant visual feedback of your edits
