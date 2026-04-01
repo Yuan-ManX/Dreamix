@@ -525,6 +525,83 @@ class TimelineManager:
         self.save_project(project)
         return merged_clip
 
+    def copy_clip(self, project_id: str, clip_id: str, new_start_time: Optional[float] = None) -> Optional[TimelineClip]:
+        project = self.get_project(project_id)
+        if not project:
+            return None
+        
+        original_clip = next((c for c in project.clips if c.clip_id == clip_id), None)
+        if not original_clip:
+            return None
+        
+        import copy
+        new_clip = copy.deepcopy(original_clip)
+        new_clip.clip_id = str(uuid.uuid4())
+        new_clip.title = f"{original_clip.title} (Copy)"
+        new_clip.created_at = datetime.now()
+        new_clip.updated_at = datetime.now()
+        
+        if new_start_time is not None:
+            new_clip.start_time = new_start_time
+        else:
+            new_clip.start_time = original_clip.start_time + original_clip.duration
+        
+        project.clips.append(new_clip)
+        self.save_project(project)
+        return new_clip
+
+    def reorder_clips(self, project_id: str, clip_order: List[str]) -> bool:
+        project = self.get_project(project_id)
+        if not project:
+            return False
+        
+        clip_map = {c.clip_id: c for c in project.clips}
+        new_clips = []
+        
+        for clip_id in clip_order:
+            if clip_id in clip_map:
+                new_clips.append(clip_map[clip_id])
+        
+        for clip in project.clips:
+            if clip.clip_id not in clip_order:
+                new_clips.append(clip)
+        
+        project.clips = new_clips
+        self.save_project(project)
+        return True
+
+    def get_clips_by_track(self, project_id: str, track_index: int) -> List[TimelineClip]:
+        project = self.get_project(project_id)
+        if not project:
+            return []
+        
+        return sorted(
+            [c for c in project.clips if c.track_index == track_index],
+            key=lambda c: c.start_time
+        )
+
+    def trim_clip(self, project_id: str, clip_id: str, trim_start: float = 0, trim_end: float = 0) -> Optional[TimelineClip]:
+        project = self.get_project(project_id)
+        if not project:
+            return None
+        
+        clip = next((c for c in project.clips if c.clip_id == clip_id), None)
+        if not clip:
+            return None
+        
+        new_start_time = clip.start_time + trim_start
+        new_duration = clip.duration - trim_start - trim_end
+        
+        if new_duration <= 0:
+            return None
+        
+        clip.start_time = new_start_time
+        clip.duration = new_duration
+        clip.updated_at = datetime.now()
+        
+        self.save_project(project)
+        return clip
+
 
 _timeline_manager_instance: Optional[TimelineManager] = None
 
