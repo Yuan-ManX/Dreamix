@@ -1,7 +1,7 @@
 'use client'
 
-import SkillsPage from '@/components/SkillsPage'
+import SkillGallery from '@/components/SkillGallery'
 
-export default function SkillsPageRoute() {
-  return <SkillsPage />
+export default function SkillsPage() {
+  return <SkillGallery />
 }
