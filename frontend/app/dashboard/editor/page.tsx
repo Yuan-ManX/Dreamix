@@ -38,6 +38,9 @@ function EditorContent() {
     updateClip,
     deleteClip,
     splitClip,
+    copyClip,
+    mergeClips,
+    trimClip,
     addTrack,
     updateTrack,
     deleteTrack,
@@ -242,6 +245,18 @@ function EditorContent() {
     })
   }, [tracks, addTrack])
 
+  const handleCopyClip = useCallback((clipId: string, newStartTime?: number) => {
+    copyClip(clipId, newStartTime)
+  }, [copyClip])
+
+  const handleMergeClips = useCallback((clipIds: string[]) => {
+    mergeClips(clipIds)
+  }, [mergeClips])
+
+  const handleTrimClip = useCallback((clipId: string, trimStart: number, trimEnd: number) => {
+    trimClip(clipId, trimStart, trimEnd)
+  }, [trimClip])
+
   const videoPreviewClips = clips.map(clip => ({
     id: clip.id,
     title: clip.title,
@@ -336,6 +351,9 @@ function EditorContent() {
               onAddClip={handleAddClip}
               onDeleteClip={deleteClip}
               onSplitClip={splitClip}
+              onCopyClip={handleCopyClip}
+              onMergeClips={handleMergeClips}
+              onTrimClip={handleTrimClip}
               onAddTrack={handleAddTrack}
               onUpdateTrack={updateTrack}
               onDeleteTrack={deleteTrack}
