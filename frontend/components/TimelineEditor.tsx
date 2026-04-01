@@ -44,6 +44,9 @@ interface TimelineEditorProps {
   onAddClip?: (trackId: string, time: number) => void
   onDeleteClip?: (clipId: string) => void
   onSplitClip?: (clipId: string, time: number) => void
+  onCopyClip?: (clipId: string, newStartTime?: number) => void
+  onMergeClips?: (clipIds: string[]) => void
+  onTrimClip?: (clipId: string, trimStart: number, trimEnd: number) => void
   onAddTrack?: (type: TimelineTrack['type']) => void
   onUpdateTrack?: (trackId: string, updates: Partial<TimelineTrack>) => void
   onDeleteTrack?: (trackId: string) => void
@@ -295,6 +298,19 @@ export default function TimelineEditor({
           >
             <span>🗑️</span>
             Delete
+          </button>
+          <button 
+            className={cn(
+              "px-4 py-1.5 text-sm rounded-lg transition-all flex items-center gap-1.5",
+              selectedClipId
+                ? "bg-blue-600 text-white hover:bg-blue-500 active:scale-95"
+                : "bg-slate-800 text-slate-500 cursor-not-allowed"
+            )}
+            onClick={() => selectedClipId && onCopyClip?.(selectedClipId)}
+            disabled={!selectedClipId}
+          >
+            <span>📋</span>
+            Copy
           </button>
         </div>
         <div className="flex items-center gap-4">
