@@ -484,7 +484,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     })
   }, [saveState])
 
-  const value: ProjectState & ProjectActions = {
+  const value = {
     ...state,
     setCurrentProject: (project) => setState(prev => ({ ...prev, currentProject: project })),
     setProjects: (projects) => setState(prev => ({ ...prev, projects })),
