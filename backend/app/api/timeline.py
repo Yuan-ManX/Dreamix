@@ -65,6 +65,27 @@ class AddTrackRequest(BaseModel):
     name: str = ""
 
 
+class CopyClipRequest(BaseModel):
+    new_start_time: Optional[float] = None
+
+
+class MergeClipsRequest(BaseModel):
+    clip_ids: List[str]
+
+
+class ReorderClipsRequest(BaseModel):
+    clip_order: List[str]
+
+
+class TrimClipRequest(BaseModel):
+    trim_start: float = 0
+    trim_end: float = 0
+
+
+class DuplicateProjectRequest(BaseModel):
+    new_name: Optional[str] = None
+
+
 @router.post("/projects")
 async def create_project(request: CreateProjectRequest):
     manager = get_timeline_manager()
@@ -265,3 +286,55 @@ async def get_preview_info(project_id: str):
             "track_count": len(project.tracks)
         }
     }
+
+
+@router.post("/projects/{project_id}/clips/{clip_id}/copy")
+async def copy_clip(project_id: str, clip_id: str, request: CopyClipRequest):
+    manager = get_timeline_manager()
+    clip = manager.copy_clip(project_id, clip_id, request.new_start_time)
+    if not clip:
+        raise HTTPException(status_code=404, detail="Clip not found")
+    return {"success": True, "clip": clip.to_dict()}
+
+
+@router.post("/projects/{project_id}/clips/merge")
+async def merge_clips(project_id: str, request: MergeClipsRequest):
+    manager = get_timeline_manager()
+    clip = manager.merge_clips(project_id, request.clip_ids)
+    if not clip:
+        raise HTTPException(status_code=400, detail="Failed to merge clips")
+    return {"success": True, "clip": clip.to_dict()}
+
+
+@router.post("/projects/{project_id}/clips/reorder")
+async def reorder_clips(project_id: str, request: ReorderClipsRequest):
+    manager = get_timeline_manager()
+    success = manager.reorder_clips(project_id, request.clip_order)
+    if not success:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return {"success": True}
+
+
+@router.get("/projects/{project_id}/tracks/{track_index}/clips")
+async def get_clips_by_track(project_id: str, track_index: int):
+    manager = get_timeline_manager()
+    clips = manager.get_clips_by_track(project_id, track_index)
+    return {"success": True, "clips": [c.to_dict() for c in clips]}
+
+
+@router.post("/projects/{project_id}/clips/{clip_id}/trim")
+async def trim_clip(project_id: str, clip_id: str, request: TrimClipRequest):
+    manager = get_timeline_manager()
+    clip = manager.trim_clip(project_id, clip_id, request.trim_start, request.trim_end)
+    if not clip:
+        raise HTTPException(status_code=400, detail="Failed to trim clip")
+    return {"success": True, "clip": clip.to_dict()}
+
+
+@router.post("/projects/{project_id}/duplicate")
+async def duplicate_project(project_id: str, request: DuplicateProjectRequest):
+    manager = get_timeline_manager()
+    project = manager.duplicate_project(project_id, request.new_name)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return {"success": True, "project": project.to_dict()}
