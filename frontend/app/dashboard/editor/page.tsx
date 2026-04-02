@@ -1,7 +1,7 @@
 'use client'
 
-import EditorPage from '@/components/EditorPage'
+import AIStudio from '@/components/AIStudio'
 
 export default function Editor() {
-  return <EditorPage />
+  return <AIStudio />
 }
