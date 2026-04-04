@@ -3,10 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib'
-import StudioLeftPanel from './StudioLeftPanel'
-import StudioPreview from './StudioPreview'
-import StudioTimeline from './StudioTimeline'
-import StudioInspector from './StudioInspector'
+import ActionVideoEditor from './ActionVideoEditor'
 import ProjectImportExport from './ProjectImportExport'
 import Link from 'next/link'
 
@@ -113,27 +110,32 @@ export default function AIStudio({ onApplySuggestion, onGenerateScript }: AIStud
 
   // Resizable Panel
   const [isResizing, setIsResizing] = useState(false)
-  const panelRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsResizing(true)
 
+    const startX = e.clientX
+    const startWidth = chatWidth
+
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (panelRef.current) {
-        const newWidth = moveEvent.clientX
-        if (newWidth >= 300 && newWidth <= 600) {
-          setChatWidth(newWidth)
-        }
-      }
+      const deltaX = moveEvent.clientX - startX
+      const newWidth = Math.max(300, Math.min(600, startWidth + deltaX))
+      setChatWidth(newWidth)
     }
 
     const handleMouseUp = () => {
       setIsResizing(false)
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
     }
 
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
   }
@@ -336,63 +338,9 @@ export default function AIStudio({ onApplySuggestion, onGenerateScript }: AIStud
           </motion.button>
         )}
 
-        {/* RIGHT PANEL - Complete Video Editor */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
-          {/* Editor Toolbar */}
-          <div className="h-12 border-b border-oat-border bg-pure-white flex items-center px-3 py-1.5 gap-2 shadow-sm">
-            <button
-              onClick={toggleChat}
-              className="p-1.5 text-warm-silver hover:text-dark-charcoal hover:bg-oat-light rounded transition-all"
-              title="Toggle AI Chat"
-            >
-              💬
-            </button>
-
-            <div className="w-px h-6 bg-oat-border"></div>
-
-            <StudioLeftPanel />
-
-            <div className="flex-1"></div>
-
-            <div className="flex items-center gap-1.5">
-              <button className="p-1.5 text-warm-silver hover:text-dark-charcoal hover:bg-oat-light rounded transition-all" title="Undo">↶</button>
-              <button className="p-1.5 text-warm-silver hover:text-dark-charcoal hover:bg-oat-light rounded transition-all" title="Redo">↷</button>
-
-              <div className="w-px h-6 bg-oat-border mx-1"></div>
-
-              <select className="px-2 py-1 bg-oat-light border border-oat-border rounded text-dark-charcoal text-xs focus:outline-none focus:border-lemon-500 cursor-pointer">
-                <option>100%</option>
-                <option>75%</option>
-                <option>50%</option>
-                <option>25%</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Editor Main Area (Preview + Inspector) */}
-          <div className="flex-1 flex overflow-hidden">
-            {/* Preview Area */}
-            <div className="flex-1 flex flex-col min-w-0">
-              <StudioPreview />
-
-              {/* Timeline Area */}
-              <div className="h-[200px] flex-shrink-0 border-t border-oat-border">
-                <StudioTimeline />
-              </div>
-            </div>
-
-            {/* Right Inspector Panel */}
-            {showInspector && (
-              <motion.div
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: inspectorWidth, opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                className="flex-shrink-0 border-l border-[#333333] overflow-hidden"
-              >
-                <StudioInspector />
-              </motion.div>
-            )}
-          </div>
+        {/* RIGHT PANEL - Action Video Editor (OpenCut-style Complete Implementation) */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <ActionVideoEditor />
         </div>
       </div>
 
