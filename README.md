@@ -4,7 +4,7 @@
 
 # Action! 🎬 🎮
 
-### An AI-Native Interactive Video Agent. 
+### The First AI-Native Agentic AIGC Engine. 
 ### From Ideas to Interactive Stories. 
 
 <p align="center">
