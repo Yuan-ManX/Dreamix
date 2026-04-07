@@ -4,7 +4,7 @@
 
 # Action!
 
-### AI原生互动视频Agent 🎬
+### 首个AI原生智能AIGC引擎 🎬
 ### 从创意到互动故事 🎮
 
 <p align="center">
