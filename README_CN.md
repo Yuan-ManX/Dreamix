@@ -4,7 +4,7 @@
 
 # Action!
 
-### 首个AI原生智能AIGC引擎 🎬
+### 首个AI原生智能创作平台 🎬
 ### 从创意到互动故事 🎮
 
 <p align="center">
